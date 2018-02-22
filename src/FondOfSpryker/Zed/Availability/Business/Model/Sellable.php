@@ -34,12 +34,5 @@ class Sellable extends BaseSellable
     public function isProductSellable($sku, $quantity)
     {
         return parent::isProductSellable($sku, $quantity);
-        /*if ($this->stockFacade->isNeverOutOfStock($sku)) {
-            return true;
-        }
-
-        $realStock = $this->calculateStockForProduct($sku);
-
-        return $realStock >= $quantity && $realStock >= $this->minQty;*/
     }
 }

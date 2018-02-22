@@ -2,8 +2,10 @@
 
 namespace FondOfSpryker\Zed\Availability\Business;
 
+use FondOfSpryker\Zed\Availability\AvailabilityDependencyProvider;
 use FondOfSpryker\Zed\Availability\Business\Model\AvailabilityHandler;
 use FondOfSpryker\Zed\Availability\Business\Model\Sellable;
+
 use Spryker\Zed\Availability\Business\AvailabilityBusinessFactory as BaseAvailabilityBusinessFactory;
 
 /**
@@ -12,6 +14,9 @@ use Spryker\Zed\Availability\Business\AvailabilityBusinessFactory as BaseAvailab
  */
 class AvailabilityBusinessFactory extends BaseAvailabilityBusinessFactory
 {
+    /**
+     * @return \Spryker\Zed\Availability\Business\Model\SellableInterface
+     */
     public function createSellableModel()
     {
         return new Sellable(
@@ -23,6 +28,8 @@ class AvailabilityBusinessFactory extends BaseAvailabilityBusinessFactory
 
     /**
      * @return \Spryker\Zed\Availability\Business\Model\AvailabilityHandlerInterface
+     *
+     * @throws \Spryker\Zed\Kernel\Exception\Container\ContainerKeyNotFoundException
      */
     public function createAvailabilityHandler()
     {
@@ -34,5 +41,15 @@ class AvailabilityBusinessFactory extends BaseAvailabilityBusinessFactory
             $this->getProductFacade(),
             $this->getConfig()->getDefaultMinQty()
         );
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface
+     *
+     * @throws \Spryker\Zed\Kernel\Exception\Container\ContainerKeyNotFoundException
+     */
+    protected function getProductFacade()
+    {
+        return $this->getProvidedDependency(AvailabilityDependencyProvider::FACADE_PRODDUCT);
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\Product\Persistence" package="src.Orm.Zed.Product.Persistence">
+    <table name="spy_product">
+        <column name="use_config_for_minimal_quantity" required="true" defaultValue="true" type="BOOLEAN"/>
+        <column name="minimal_quantity" type="INTEGER" defaultValue="0"/>
+    </table>
+</database>

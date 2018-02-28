@@ -8,6 +8,9 @@ use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface;
 
 class Sellable extends BaseSellable
 {
+    /**
+     * @var int
+     */
     protected $minQty;
 
     /**
@@ -18,10 +21,10 @@ class Sellable extends BaseSellable
     public function __construct(
         AvailabilityToOmsInterface $omsFacade,
         AvailabilityToStockInterface $stockFacade,
-        float $minQty
+        int $minQty
     ) {
         parent::__construct($omsFacade, $stockFacade);
-        $this->minQty =  $minQty;
+        $this->minQty = $minQty;
     }
 
     /**

@@ -42,14 +42,11 @@ class AvailabilityHandler extends BaseAvailabilityHandler
         $this->defaultMinimalQuantity = $defaultMinimalQuantity;
     }
 
-
     /**
      * @param string $sku
      * @param int $quantity
      *
      * @return \Orm\Zed\Availability\Persistence\SpyAvailability
-     *
-     * @throws \Spryker\Zed\Product\Business\Exception\MissingProductException
      */
     protected function saveAndTouchAvailability($sku, $quantity)
     {
@@ -65,11 +62,9 @@ class AvailabilityHandler extends BaseAvailabilityHandler
     }
 
     /**
-     * @param $sku
+     * @param string $sku
      *
      * @return int
-     *
-     * @throws \Spryker\Zed\Product\Business\Exception\MissingProductException
      */
     protected function getMinimalQuantityForAvailability($sku)
     {

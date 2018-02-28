@@ -3,7 +3,6 @@
 namespace FondOfSpryker\Zed\Availability\Business\Model;
 
 use Spryker\Zed\Availability\Business\Model\Sellable as BaseSellable;
-
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToOmsInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface;
 

@@ -3,11 +3,11 @@ parameters:
   bin_dir: vendor/bin
   tasks:
     composer:
-      no_check_lock: true
       no_local_repository: true
     yamllint: ~
     jsonlint: ~
     xmllint: ~
     phpcs:
       standard: vendor/spryker/code-sniffer/Spryker/ruleset.xml
+    phpcpd: ~
     codeception: ~

@@ -5,7 +5,19 @@
   "authors": [
     {
       "name": "Daniel Rose",
-      "email": "daniel.rose@fondof.de"
+      "email": "daniel-rose@gmx.de"
+    },
+    {
+      "name": "Pascal Fischer",
+      "email": "p-fischer@gmx.net"
+    },
+    {
+      "name": "Jozsef Geng",
+      "email": "gengjozsef86@gmail.com"
+    },
+    {
+      "name": "Markus Nörenberg",
+      "email": "noerenberg.markus@gmail.com"
     }
   ],
   "require": {
@@ -17,7 +29,8 @@
     "codeception/codeception": "^2.3",
     "mikey179/vfsStream": "^1.6",
     "phpro/grumphp": "^0.14",
-    "sebastian/phpcpd": "^4.0"
+    "sebastian/phpcpd": "^4.0",
+    "php-coveralls/php-coveralls": "^2.0"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,

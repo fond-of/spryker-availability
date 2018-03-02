@@ -2,8 +2,8 @@
 
 namespace FondOfSpryker\Zed\Availability\Business;
 
+use FondOfSpryker\Zed\Availability\AvailabilityDependencyProvider;
 use FondOfSpryker\Zed\Availability\Business\Model\AvailabilityHandler;
-use FondOfSpryker\Zed\Availability\Business\Model\Sellable;
 use Spryker\Zed\Availability\Business\AvailabilityBusinessFactory as BaseAvailabilityBusinessFactory;
 
 /**
@@ -12,15 +12,6 @@ use Spryker\Zed\Availability\Business\AvailabilityBusinessFactory as BaseAvailab
  */
 class AvailabilityBusinessFactory extends BaseAvailabilityBusinessFactory
 {
-    public function createSellableModel()
-    {
-        return new Sellable(
-            $this->getOmsFacade(),
-            $this->getStockFacade(),
-            $this->getConfig()->getDefaultMinQty()
-        );
-    }
-
     /**
      * @return \Spryker\Zed\Availability\Business\Model\AvailabilityHandlerInterface
      */
@@ -32,7 +23,15 @@ class AvailabilityBusinessFactory extends BaseAvailabilityBusinessFactory
             $this->getTouchFacade(),
             $this->getQueryContainer(),
             $this->getProductFacade(),
-            $this->getConfig()->getDefaultMinQty()
+            $this->getConfig()->getDefaultMinimalQuantity()
         );
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface
+     */
+    protected function getProductFacade()
+    {
+        return $this->getProvidedDependency(AvailabilityDependencyProvider::FACADE_PRODDUCT);
     }
 }

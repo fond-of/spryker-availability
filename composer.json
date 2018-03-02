@@ -1,5 +1,6 @@
 {
   "name": "fond-of-spryker/availability",
+  "description": "n/a",
   "license": "MIT",
   "authors": [
     {
@@ -8,14 +9,15 @@
     }
   ],
   "require": {
+    "php": ">=7.1",
     "spryker/availability": "^5.0.0"
   },
   "require-dev": {
-    "spryker/checkout": "*",
-    "spryker/code-sniffer": "*",
-    "spryker/propel": "*",
-    "spryker/silex": "*",
-    "spryker/testify": "*"
+    "spryker/code-sniffer": "^0.11",
+    "codeception/codeception": "^2.3",
+    "mikey179/vfsStream": "^1.6",
+    "phpro/grumphp": "^0.14",
+    "sebastian/phpcpd": "^4.0"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -26,7 +28,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "FondOfSpryker\\": "tests/FondOfSpryker/"
+      "FondOfSpryker\\": "tests/FondOfSpryker/",
+      "Orm\\": "tests/Orm/"
     }
   }
 }

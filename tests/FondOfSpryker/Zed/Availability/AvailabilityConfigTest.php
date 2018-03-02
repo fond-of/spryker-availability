@@ -42,7 +42,7 @@ class AvailabilityConfigTest extends Unit
     {
         Config::getInstance()->init();
 
-        $this->assertEquals(10, $this->availabilityConfig->getDefaultMinQty());
+        $this->assertEquals(10, $this->availabilityConfig->getDefaultMinimalQuantity());
     }
 
     /**
@@ -56,6 +56,6 @@ class AvailabilityConfigTest extends Unit
 
         Config::getInstance()->init();
 
-        $this->assertEquals(50, $this->availabilityConfig->getDefaultMinQty());
+        $this->assertEquals(50, $this->availabilityConfig->getDefaultMinimalQuantity());
     }
 }

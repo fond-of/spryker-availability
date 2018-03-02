@@ -10,7 +10,7 @@ class AvailabilityConfig extends BaseAvailabilityConfig
     /**
      * @return int
      */
-    public function getDefaultMinQty(): int
+    public function getDefaultMinimalQuantity(): int
     {
         return $this->get(AvailabilityConstants::DEFAULT_MINIMAL_QUANTITY, AvailabilityConstants::DEFAULT_MINIMAL_QUANTITY_VALUE);
     }

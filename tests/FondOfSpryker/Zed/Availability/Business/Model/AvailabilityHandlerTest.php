@@ -4,6 +4,7 @@ namespace FondOfSpryker\Zed\Availability\Business\Model;
 
 use Codeception\Test\Unit;
 use FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface;
+use ReflectionClass;
 use Spryker\Zed\Availability\Business\Model\SellableInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface;
@@ -213,7 +214,7 @@ class AvailabilityHandlerTest extends Unit
             ->with($abstractId, $storeId)
             ->willReturn($this->spyAvailabilityQueryMock);
 
-        $reflection = new \ReflectionClass(get_class($this->availabilityHandler));
+        $reflection = new ReflectionClass(get_class($this->availabilityHandler));
         $method = $reflection->getMethod('saveAndTouchAvailability');
         $method->setAccessible(true);
 
@@ -295,7 +296,7 @@ class AvailabilityHandlerTest extends Unit
             ->with($abstractId, $storeId)
             ->willReturn($this->spyAvailabilityQueryMock);
 
-        $reflection = new \ReflectionClass(get_class($this->availabilityHandler));
+        $reflection = new ReflectionClass(get_class($this->availabilityHandler));
         $method = $reflection->getMethod('saveAndTouchAvailability');
         $method->setAccessible(true);
 
@@ -377,7 +378,7 @@ class AvailabilityHandlerTest extends Unit
             ->with($abstractId, $storeId)
             ->willReturn($this->spyAvailabilityQueryMock);
 
-        $reflection = new \ReflectionClass(get_class($this->availabilityHandler));
+        $reflection = new ReflectionClass(get_class($this->availabilityHandler));
         $method = $reflection->getMethod('saveAndTouchAvailability');
         $method->setAccessible(true);
 

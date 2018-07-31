@@ -9,9 +9,9 @@ use FondOfSpryker\Zed\Availability\Business\Model\AvailabilityHandler;
 use FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToOmsInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface;
 use Spryker\Zed\Availability\Persistence\AvailabilityQueryContainer;
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface;
 use Spryker\Zed\Kernel\Container;
 
 class AvailabilityBusinessFactoryTest extends Unit

@@ -23,15 +23,18 @@ class AvailabilityBusinessFactory extends BaseAvailabilityBusinessFactory
             $this->getTouchFacade(),
             $this->getQueryContainer(),
             $this->getProductFacade(),
+            $this->getStoreFacade(),
             $this->getConfig()->getDefaultMinimalQuantity()
         );
     }
 
     /**
+     * @throws
+     *
      * @return \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface
      */
     protected function getProductFacade()
     {
-        return $this->getProvidedDependency(AvailabilityDependencyProvider::FACADE_PRODDUCT);
+        return $this->getProvidedDependency(AvailabilityDependencyProvider::FACADE_PRODUCT);
     }
 }

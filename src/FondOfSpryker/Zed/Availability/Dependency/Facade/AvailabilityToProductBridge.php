@@ -9,6 +9,8 @@ class AvailabilityToProductBridge extends BaseAvailabilityToProductBridge implem
     /**
      * @param string $concreteSku
      *
+     * @throws
+     *
      * @return \Generated\Shared\Transfer\ProductConcreteTransfer
      */
     public function getProductConcrete($concreteSku)

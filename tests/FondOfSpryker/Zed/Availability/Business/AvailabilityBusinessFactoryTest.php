@@ -11,6 +11,7 @@ use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToOmsInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface;
 use Spryker\Zed\Availability\Persistence\AvailabilityQueryContainer;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface;
 use Spryker\Zed\Kernel\Container;
 
 class AvailabilityBusinessFactoryTest extends Unit
@@ -44,6 +45,11 @@ class AvailabilityBusinessFactoryTest extends Unit
      * @var null|\Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $touchFacadeMock;
+
+    /**
+     * @var null|\Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $storeFacadeMock;
 
     /**
      * @var null|\Spryker\Zed\Availability\Persistence\AvailabilityQueryContainer|\PHPUnit\Framework\MockObject\MockObject
@@ -84,6 +90,10 @@ class AvailabilityBusinessFactoryTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->storeFacadeMock = $this->getMockBuilder(AvailabilityToStoreFacadeInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->queryContainerMock = $this->getMockBuilder(AvailabilityQueryContainer::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -109,15 +119,19 @@ class AvailabilityBusinessFactoryTest extends Unit
             ->withConsecutive(
                 [AvailabilityDependencyProvider::FACADE_OMS],
                 [AvailabilityDependencyProvider::FACADE_STOCK],
+                [AvailabilityDependencyProvider::FACADE_STORE],
                 [AvailabilityDependencyProvider::FACADE_STOCK],
                 [AvailabilityDependencyProvider::FACADE_TOUCH],
-                [AvailabilityDependencyProvider::FACADE_PRODDUCT]
+                [AvailabilityDependencyProvider::FACADE_PRODUCT],
+                [AvailabilityDependencyProvider::FACADE_STORE]
             )->willReturnOnConsecutiveCalls(
                 $this->omsFacadeMock,
                 $this->stockFacadeMock,
+                $this->storeFacadeMock,
                 $this->stockFacadeMock,
                 $this->touchFacadeMock,
-                $this->productFacadeMock
+                $this->productFacadeMock,
+                $this->storeFacadeMock
             );
 
         $this->configMock->expects($this->atLeastOnce())

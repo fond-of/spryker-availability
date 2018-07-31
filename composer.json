@@ -30,7 +30,8 @@
     "mikey179/vfsStream": "^1.6",
     "phpro/grumphp": "^0.14",
     "sebastian/phpcpd": "^4.0",
-    "php-coveralls/php-coveralls": "^2.0"
+    "php-coveralls/php-coveralls": "^2.0",
+    "phpunit/phpunit": "7.1.0"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -42,7 +43,8 @@
   "autoload-dev": {
     "psr-4": {
       "FondOfSpryker\\": "tests/FondOfSpryker/",
-      "Orm\\": "tests/Orm/"
+      "Orm\\": "tests/Orm/",
+      "Generated\\": "tests/Generated/"
     }
   }
 }

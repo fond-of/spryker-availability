@@ -3,9 +3,11 @@
 namespace FondOfSpryker\Zed\Availability\Business\Model;
 
 use FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface;
+use Generated\Shared\Transfer\StoreTransfer;
 use Spryker\Zed\Availability\Business\Model\AvailabilityHandler as BaseAvailabilityHandler;
 use Spryker\Zed\Availability\Business\Model\SellableInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface;
 use Spryker\Zed\Availability\Persistence\AvailabilityQueryContainerInterface;
 
@@ -27,6 +29,7 @@ class AvailabilityHandler extends BaseAvailabilityHandler
      * @param \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface $touchFacade
      * @param \Spryker\Zed\Availability\Persistence\AvailabilityQueryContainerInterface $queryContainer
      * @param \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface $productFacade
+     * @param \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface $storeFacade
      * @param int $defaultMinimalQuantity
      */
     public function __construct(
@@ -35,9 +38,10 @@ class AvailabilityHandler extends BaseAvailabilityHandler
         AvailabilityToTouchInterface $touchFacade,
         AvailabilityQueryContainerInterface $queryContainer,
         AvailabilityToProductInterface $productFacade,
+        AvailabilityToStoreFacadeInterface $storeFacade,
         int $defaultMinimalQuantity
     ) {
-        parent::__construct($sellable, $stockFacade, $touchFacade, $queryContainer, $productFacade);
+        parent::__construct($sellable, $stockFacade, $touchFacade, $queryContainer, $productFacade, $storeFacade);
 
         $this->defaultMinimalQuantity = $defaultMinimalQuantity;
     }
@@ -45,10 +49,11 @@ class AvailabilityHandler extends BaseAvailabilityHandler
     /**
      * @param string $sku
      * @param int $quantity
+     * @param \Generated\Shared\Transfer\StoreTransfer $storeTransfer
      *
      * @return \Orm\Zed\Availability\Persistence\SpyAvailability
      */
-    protected function saveAndTouchAvailability($sku, $quantity)
+    protected function saveAndTouchAvailability($sku, $quantity, StoreTransfer $storeTransfer)
     {
         $minimalQuantity = $this->getMinimalQuantityForAvailability($sku);
 
@@ -58,11 +63,13 @@ class AvailabilityHandler extends BaseAvailabilityHandler
             $quantity = 0;
         }
 
-        return parent::saveAndTouchAvailability($sku, $quantity);
+        return parent::saveAndTouchAvailability($sku, $quantity, $storeTransfer);
     }
 
     /**
      * @param string $sku
+     *
+     * @throws
      *
      * @return int
      */

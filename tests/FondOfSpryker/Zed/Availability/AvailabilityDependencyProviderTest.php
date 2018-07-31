@@ -167,12 +167,12 @@ class AvailabilityDependencyProviderTest extends Unit
         $valueNames = $this->containerMock->keys();
 
         $this->assertTrue(in_array(AvailabilityDependencyProvider::FACADE_OMS, $valueNames));
-        $this->assertTrue(in_array(AvailabilityDependencyProvider::FACADE_PRODDUCT, $valueNames));
+        $this->assertTrue(in_array(AvailabilityDependencyProvider::FACADE_PRODUCT, $valueNames));
         $this->assertTrue(in_array(AvailabilityDependencyProvider::FACADE_TOUCH, $valueNames));
         $this->assertTrue(in_array(AvailabilityDependencyProvider::FACADE_STOCK, $valueNames));
 
         $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_OMS]);
-        $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_PRODDUCT]);
+        $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_PRODUCT]);
         $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_TOUCH]);
         $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_STOCK]);
     }

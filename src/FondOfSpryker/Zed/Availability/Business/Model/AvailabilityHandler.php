@@ -48,6 +48,18 @@ class AvailabilityHandler extends BaseAvailabilityHandler
 
     /**
      * @param string $sku
+     *
+     * @return void
+     */
+    public function updateAvailability($sku)
+    {
+        $storeTransfer = $this->storeFacade->getCurrentStore();
+
+        $this->updateAvailabilityForStore($sku, $storeTransfer);
+    }
+
+    /**
+     * @param string $sku
      * @param int $quantity
      * @param \Generated\Shared\Transfer\StoreTransfer $storeTransfer
      *

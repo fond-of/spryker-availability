@@ -6,6 +6,7 @@ use FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterf
 use Generated\Shared\Transfer\StoreTransfer;
 use Spryker\Zed\Availability\Business\Model\AvailabilityHandler as BaseAvailabilityHandler;
 use Spryker\Zed\Availability\Business\Model\SellableInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToEventFacadeInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface;
@@ -24,13 +25,15 @@ class AvailabilityHandler extends BaseAvailabilityHandler
     protected $defaultMinimalQuantity;
 
     /**
-     * @param \Spryker\Zed\Availability\Business\Model\SellableInterface $sellable
-     * @param \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface $stockFacade
-     * @param \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface $touchFacade
-     * @param \Spryker\Zed\Availability\Persistence\AvailabilityQueryContainerInterface $queryContainer
-     * @param \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface $productFacade
-     * @param \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface $storeFacade
-     * @param int $defaultMinimalQuantity
+     * AvailabilityHandler constructor.
+     * @param  \Spryker\Zed\Availability\Business\Model\SellableInterface  $sellable
+     * @param  \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface  $stockFacade
+     * @param  \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface  $touchFacade
+     * @param  \Spryker\Zed\Availability\Persistence\AvailabilityQueryContainerInterface  $queryContainer
+     * @param  \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface  $productFacade
+     * @param  \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface  $storeFacade
+     * @param  \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToEventFacadeInterface  $eventFacade
+     * @param  int  $defaultMinimalQuantity
      */
     public function __construct(
         SellableInterface $sellable,
@@ -39,9 +42,10 @@ class AvailabilityHandler extends BaseAvailabilityHandler
         AvailabilityQueryContainerInterface $queryContainer,
         AvailabilityToProductInterface $productFacade,
         AvailabilityToStoreFacadeInterface $storeFacade,
+        AvailabilityToEventFacadeInterface $eventFacade,
         int $defaultMinimalQuantity
     ) {
-        parent::__construct($sellable, $stockFacade, $touchFacade, $queryContainer, $productFacade, $storeFacade);
+        parent::__construct($sellable, $stockFacade, $touchFacade, $queryContainer, $productFacade, $storeFacade, $eventFacade);
 
         $this->defaultMinimalQuantity = $defaultMinimalQuantity;
     }

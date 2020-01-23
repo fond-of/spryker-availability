@@ -24,6 +24,7 @@ class AvailabilityBusinessFactory extends BaseAvailabilityBusinessFactory
             $this->getQueryContainer(),
             $this->getProductFacade(),
             $this->getStoreFacade(),
+            $this->getEventFacade(),
             $this->getConfig()->getDefaultMinimalQuantity()
         );
     }

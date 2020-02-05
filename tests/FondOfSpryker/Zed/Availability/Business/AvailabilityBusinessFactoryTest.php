@@ -17,47 +17,47 @@ use Spryker\Zed\Kernel\Container;
 class AvailabilityBusinessFactoryTest extends Unit
 {
     /**
-     * @var null|\Spryker\Zed\Kernel\Container|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Kernel\Container|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $containerMock;
 
     /**
-     * @var null|\FondOfSpryker\Zed\Availability\AvailabilityConfig|\PHPUnit\Framework\MockObject\MockObject
+     * @var \FondOfSpryker\Zed\Availability\AvailabilityConfig|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $configMock;
 
     /**
-     * @var null|\FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $productFacadeMock;
 
     /**
-     * @var null|\Spryker\Zed\Availability\Dependency\Facade\AvailabilityToOmsInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToOmsInterface|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $omsFacadeMock;
 
     /**
-     * @var null|\Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $stockFacadeMock;
 
     /**
-     * @var null|\Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $touchFacadeMock;
 
     /**
-     * @var null|\Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $storeFacadeMock;
 
     /**
-     * @var null|\Spryker\Zed\Availability\Persistence\AvailabilityQueryContainer|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Availability\Persistence\AvailabilityQueryContainer|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $queryContainerMock;
 
     /**
-     * @var null|\FondOfSpryker\Zed\Availability\Business\AvailabilityBusinessFactory
+     * @var \FondOfSpryker\Zed\Availability\Business\AvailabilityBusinessFactory|null
      */
     protected $availabilityBusinessFactory;
 

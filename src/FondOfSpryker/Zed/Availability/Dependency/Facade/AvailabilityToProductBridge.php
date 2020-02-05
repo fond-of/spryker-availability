@@ -2,14 +2,12 @@
 
 namespace FondOfSpryker\Zed\Availability\Dependency\Facade;
 
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToProductBridge as BaseAvailabilityToProductBridge;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToProductFacadeBridge as SprykerAvailabilityToProductFacadeBridge;
 
-class AvailabilityToProductBridge extends BaseAvailabilityToProductBridge implements AvailabilityToProductInterface
+class AvailabilityToProductBridge extends SprykerAvailabilityToProductFacadeBridge implements AvailabilityToProductInterface
 {
     /**
      * @param string $concreteSku
-     *
-     * @throws
      *
      * @return \Generated\Shared\Transfer\ProductConcreteTransfer
      */

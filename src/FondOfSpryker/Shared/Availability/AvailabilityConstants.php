@@ -4,6 +4,6 @@ namespace FondOfSpryker\Shared\Availability;
 
 interface AvailabilityConstants
 {
-    const DEFAULT_MINIMAL_QUANTITY = 'DEFAULT_MINIMAL_QUANTITY';
-    const DEFAULT_MINIMAL_QUANTITY_VALUE = 10;
+    public const DEFAULT_MINIMAL_QUANTITY = 'DEFAULT_MINIMAL_QUANTITY';
+    public const DEFAULT_MINIMAL_QUANTITY_VALUE = 10;
 }

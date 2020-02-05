@@ -2,9 +2,9 @@
 
 namespace FondOfSpryker\Zed\Availability\Dependency\Facade;
 
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface as BaseAvailabilityToProductInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToProductFacadeInterface as SprykerAvailabilityToProductFacadeInterface;
 
-interface AvailabilityToProductInterface extends BaseAvailabilityToProductInterface
+interface AvailabilityToProductInterface extends SprykerAvailabilityToProductFacadeInterface
 {
     /**
      * @param string $concreteSku

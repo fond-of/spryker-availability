@@ -141,8 +141,6 @@ class AvailabilityHandlerTest extends Unit
     }
 
     /**
-     * @throws
-     *
      * @return void
      */
     public function testSaveCurrentAvailabilityWithDefaultMinimalQuantity()
@@ -222,8 +220,6 @@ class AvailabilityHandlerTest extends Unit
     }
 
     /**
-     * @throws
-     *
      * @return void
      */
     public function testSaveCurrentAvailability()
@@ -304,8 +300,6 @@ class AvailabilityHandlerTest extends Unit
     }
 
     /**
-     * @throws
-     *
      * @return void
      */
     public function testSaveCurrentAvailabilityWithNewQuantityEqualsZero()

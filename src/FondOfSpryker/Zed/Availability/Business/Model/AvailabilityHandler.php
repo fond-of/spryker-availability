@@ -73,8 +73,8 @@ class AvailabilityHandler extends BaseAvailabilityHandler
         if ($quantity < 0) {
             $quantity = 0;
         }
-
-        return parent::saveAndTouchAvailability($sku, $quantity, $storeTransfer);
+        
+        return parent::saveAndTouchAvailability($sku, new Decimal($quantity), $storeTransfer);
     }
 
     /**

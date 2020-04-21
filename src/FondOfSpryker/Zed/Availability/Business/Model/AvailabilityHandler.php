@@ -53,9 +53,7 @@ class AvailabilityHandler extends BaseAvailabilityHandler
      */
     public function updateAvailability($sku)
     {
-        $storeTransfer = $this->storeFacade->getCurrentStore();
-
-        $this->updateAvailabilityForStore($sku, $storeTransfer);
+        $this->updateAvailabilityForStore($sku, $this->storeFacade->getCurrentStore());
     }
 
     /**

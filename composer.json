@@ -22,7 +22,8 @@
   ],
   "require": {
     "php": ">=7.2",
-    "spryker/availability": "~6.3.0"
+    "spryker/availability": "~6.3.0",
+    "spryker/oms": "~8.4.0"
   },
   "require-dev": {
     "spryker/code-sniffer": "^0.11",

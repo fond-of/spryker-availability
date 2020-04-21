@@ -1,4 +1,5 @@
-namespace: FondOfSpryker
+namespace: fond-of-spryker/availability
+
 suites:
   unit:
     path: .
@@ -17,4 +18,8 @@ paths:
 coverage:
   enabled: true
   include:
-    - src/*.php
+    - src/FondOfSpryker/*.php
+
+modules:
+  enabled:
+    - \FondOfCodeception\Module\Spryker

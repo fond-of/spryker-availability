@@ -3,12 +3,15 @@ language: php
 php:
   - 7.2
 
+env:
+  COMPOSER_MEMORY_LIMIT=-1
+
 cache:
   directories:
     - $HOME/.composer/cache
 
 install:
-  - COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction --prefer-dist
+  - composer install --no-interaction --prefer-dist
 
 script:
   - vendor/bin/phpcs src --standard=vendor/spryker/code-sniffer/Spryker/ruleset.xml

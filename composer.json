@@ -21,7 +21,7 @@
     }
   ],
   "require": {
-    "php": ">=7.2",
+    "php": ">=7.1",
     "spryker/availability": "~6.3.0",
     "spryker/oms": "~8.4.0"
   },

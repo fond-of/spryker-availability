@@ -5,6 +5,7 @@ namespace FondOfSpryker\Zed\Availability\Business;
 use FondOfSpryker\Zed\Availability\AvailabilityDependencyProvider;
 use FondOfSpryker\Zed\Availability\Business\Model\AvailabilityHandler;
 use Spryker\Zed\Availability\Business\AvailabilityBusinessFactory as BaseAvailabilityBusinessFactory;
+use Spryker\Zed\Availability\Business\Model\AvailabilityHandlerInterface;
 
 /**
  * @method \FondOfSpryker\Zed\Availability\AvailabilityConfig getConfig()
@@ -15,7 +16,7 @@ class AvailabilityBusinessFactory extends BaseAvailabilityBusinessFactory
     /**
      * @return \Spryker\Zed\Availability\Business\Model\AvailabilityHandlerInterface
      */
-    public function createAvailabilityHandler()
+    public function createAvailabilityHandler(): AvailabilityHandlerInterface
     {
         return new AvailabilityHandler(
             $this->createSellableModel(),

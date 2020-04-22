@@ -7,5 +7,7 @@
         <property name="useConfigForMinimalQuantity" type="bool" />
         <property name="minimalQuantity" type="int" />
     </transfer>
+
+    <transfer name="Store"/>
 </transfers>
 

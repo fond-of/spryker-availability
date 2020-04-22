@@ -64,7 +64,7 @@ class AvailabilityBusinessFactoryTest extends Unit
     /**
      * @return void
      */
-    protected function _before()
+    protected function _before(): void
     {
         $this->containerMock = $this->getMockBuilder(Container::class)
             ->disableOriginalConstructor()
@@ -100,22 +100,22 @@ class AvailabilityBusinessFactoryTest extends Unit
 
         $this->availabilityBusinessFactory = new AvailabilityBusinessFactory();
 
-        $this->availabilityBusinessFactory->setConfig($this->configMock)
-            ->setContainer($this->containerMock)
-            ->setQueryContainer($this->queryContainerMock);
+        $this->availabilityBusinessFactory->setConfig($this->configMock);
+        $this->availabilityBusinessFactory->setContainer($this->containerMock);
+        $this->availabilityBusinessFactory->setQueryContainer($this->queryContainerMock);
     }
 
     /**
      * @return void
      */
-    public function testCreateAvailabilityHandler()
+    public function testCreateAvailabilityHandler(): void
     {
         $this->containerMock->expects($this->atLeastOnce())
-            ->method('offsetExists')
+            ->method('has')
             ->willReturn(true);
 
         $this->containerMock->expects($this->atLeastOnce())
-            ->method('offsetGet')
+            ->method('get')
             ->withConsecutive(
                 [AvailabilityDependencyProvider::FACADE_OMS],
                 [AvailabilityDependencyProvider::FACADE_STOCK],

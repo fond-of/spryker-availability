@@ -48,6 +48,16 @@ class AvailabilityHandler extends BaseAvailabilityHandler
 
     /**
      * @param string $sku
+     *
+     * @return void
+     */
+    public function updateAvailability($sku): void
+    {
+        $this->updateAvailabilityForStore($sku, $this->storeFacade->getCurrentStore());
+    }
+
+    /**
+     * @param string $sku
      * @param int $quantity
      * @param \Generated\Shared\Transfer\StoreTransfer $storeTransfer
      *
@@ -55,25 +65,35 @@ class AvailabilityHandler extends BaseAvailabilityHandler
      */
     protected function saveAndTouchAvailability($sku, $quantity, StoreTransfer $storeTransfer)
     {
-        $minimalQuantity = $this->getMinimalQuantityForAvailability($sku);
-
-        $quantity = $quantity - $minimalQuantity;
-
-        if ($quantity < 0) {
-            $quantity = 0;
-        }
-
+        $quantity = $this->prepareQuantityForAvailability($sku, $quantity);
         return parent::saveAndTouchAvailability($sku, $quantity, $storeTransfer);
     }
 
     /**
      * @param string $sku
-     *
-     * @throws
+     * @param int $quantity
      *
      * @return int
      */
-    protected function getMinimalQuantityForAvailability($sku)
+    protected function prepareQuantityForAvailability(string $sku, int $quantity): int
+    {
+
+        $minimalQuantity = $this->getMinimalQuantityForAvailability($sku);
+        $quantity -= $minimalQuantity;
+
+        if ($quantity < 0) {
+            return 0;
+        }
+
+        return $quantity;
+    }
+
+    /**
+     * @param string $sku
+     *
+     * @return int
+     */
+    protected function getMinimalQuantityForAvailability(string $sku): int
     {
         $concreteProduct = $this->productFacade->getProductConcrete($sku);
 

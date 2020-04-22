@@ -3,59 +3,54 @@
 namespace FondOfSpryker\Zed\Availability;
 
 use Codeception\Test\Unit;
-use org\bovigo\vfs\vfsStream;
-use Spryker\Shared\Config\Config;
+use FondOfSpryker\Shared\Availability\AvailabilityConstants;
 
 class AvailabilityConfigTest extends Unit
 {
     /**
-     * @var \FondOfSpryker\Zed\Availability\AvailabilityConfig
+     * @var \FondOfSpryker\Zed\Availability\AvailabilityConfig|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $availabilityConfig;
 
     /**
-     * @var \org\bovigo\vfs\vfsStreamDirectory
-     */
-    protected $vfsStreamDirectory;
-
-    /**
      * @return void
      */
-    protected function _before()
+    protected function _before(): void
     {
-        $this->vfsStreamDirectory = vfsStream::setup('root', null, [
-            'config' => [
-                'Shared' => [
-                    'stores.php' => file_get_contents(codecept_data_dir('stores.php')),
-                    'config_default.php' => file_get_contents(codecept_data_dir('empty_config_default.php')),
-                ],
-            ],
-        ]);
-
-        $this->availabilityConfig = new AvailabilityConfig();
+        $this->availabilityConfig = $this->getMockBuilder(AvailabilityConfig::class)
+            ->setMethods(['get'])
+            ->getMock();
     }
 
     /**
      * @return void
      */
-    public function testGetDefaultMinQty()
+    public function testGetDefaultMinQty(): void
     {
-        Config::getInstance()->init();
+        $this->availabilityConfig->expects($this->atLeastOnce())
+            ->method('get')
+            ->with(AvailabilityConstants::DEFAULT_MINIMAL_QUANTITY, AvailabilityConstants::DEFAULT_MINIMAL_QUANTITY_VALUE)
+            ->willReturn(AvailabilityConstants::DEFAULT_MINIMAL_QUANTITY_VALUE);
 
-        $this->assertEquals(10, $this->availabilityConfig->getDefaultMinimalQuantity());
+        $this->assertEquals(
+            AvailabilityConstants::DEFAULT_MINIMAL_QUANTITY_VALUE,
+            $this->availabilityConfig->getDefaultMinimalQuantity()
+        );
     }
 
     /**
      * @return void
      */
-    public function testGetCustomDefaultMinQty()
+    public function testGetCustomDefaultMinQty(): void
     {
-        $fileUrl = vfsStream::url('root/config/Shared/config_default.php');
-        $newFileContent = file_get_contents(codecept_data_dir('config_default.php'));
-        file_put_contents($fileUrl, $newFileContent);
+        $this->availabilityConfig->expects($this->atLeastOnce())
+            ->method('get')
+            ->with(AvailabilityConstants::DEFAULT_MINIMAL_QUANTITY, AvailabilityConstants::DEFAULT_MINIMAL_QUANTITY_VALUE)
+            ->willReturn(20);
 
-        Config::getInstance()->init();
-
-        $this->assertEquals(50, $this->availabilityConfig->getDefaultMinimalQuantity());
+        $this->assertEquals(
+            20,
+            $this->availabilityConfig->getDefaultMinimalQuantity()
+        );
     }
 }

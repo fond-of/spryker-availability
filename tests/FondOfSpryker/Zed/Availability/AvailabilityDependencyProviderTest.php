@@ -3,11 +3,13 @@
 namespace FondOfSpryker\Zed\Availability;
 
 use Codeception\Test\Unit;
-use Spryker\Shared\Kernel\AbstractLocator;
+use Spryker\Shared\Kernel\BundleProxy;
 use Spryker\Zed\Kernel\Container;
+use Spryker\Zed\Kernel\Locator;
 use Spryker\Zed\Oms\Business\OmsFacadeInterface;
 use Spryker\Zed\Product\Business\ProductFacadeInterface;
 use Spryker\Zed\Stock\Business\StockFacadeInterface;
+use Spryker\Zed\Store\Business\StoreFacadeInterface;
 use Spryker\Zed\Touch\Business\TouchFacadeInterface;
 
 class AvailabilityDependencyProviderTest extends Unit
@@ -23,29 +25,14 @@ class AvailabilityDependencyProviderTest extends Unit
     protected $containerMock;
 
     /**
-     * @var \Spryker\Shared\Kernel\AbstractLocator|\PHPUnit\Framework\MockObject\MockObject|null
+     * @var \Spryker\Zed\Kernel\Locator|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $locatorMock;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|null
+     * @var \Spryker\Shared\Kernel\BundleProxy|\PHPUnit\Framework\MockObject\MockObject|null
      */
-    protected $omsMock;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|null
-     */
-    protected $productMock;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|null
-     */
-    protected $touchMock;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|null
-     */
-    protected $stockMock;
+    protected $bundleProxyMock;
 
     /**
      * @var \Spryker\Zed\Oms\Business\OmsFacadeInterface|\PHPUnit\Framework\MockObject\MockObject|null
@@ -68,40 +55,27 @@ class AvailabilityDependencyProviderTest extends Unit
     protected $touchFacadeMock;
 
     /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Zed\Store\Business\StoreFacadeInterface
+     */
+    protected $storeFacadeMock;
+
+    /**
      * @return void
      */
-    protected function _before()
+    protected function _before(): void
     {
         $this->availabilityDependencyProvider = new AvailabilityDependencyProvider();
 
         $this->containerMock = $this->getMockBuilder(Container::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getLocator'])
+            ->setMethodsExcept(['factory', 'set', 'offsetSet', 'get', 'offsetGet'])
             ->getMock();
 
-        $this->locatorMock = $this->getMockBuilder(AbstractLocator::class)
+        $this->locatorMock = $this->getMockBuilder(Locator::class)
             ->disableOriginalConstructor()
-            ->setMethods(['oms', 'product', 'touch', 'stock', 'locate'])
             ->getMock();
 
-        $this->omsMock = $this->getMockBuilder('\Generated\Zed\Ide\Oms')
+        $this->bundleProxyMock = $this->getMockBuilder(BundleProxy::class)
             ->disableOriginalConstructor()
-            ->setMethods(['facade'])
-            ->getMock();
-
-        $this->productMock = $this->getMockBuilder('\Generated\Zed\Ide\Product')
-            ->disableOriginalConstructor()
-            ->setMethods(['facade'])
-            ->getMock();
-
-        $this->touchMock = $this->getMockBuilder('\Generated\Zed\Ide\Touch')
-            ->disableOriginalConstructor()
-            ->setMethods(['facade'])
-            ->getMock();
-
-        $this->stockMock = $this->getMockBuilder('\Generated\Zed\Ide\Stock')
-            ->disableOriginalConstructor()
-            ->setMethods(['facade'])
             ->getMock();
 
         $this->omsFacadeMock = $this->getMockBuilder(OmsFacadeInterface::class)
@@ -119,61 +93,43 @@ class AvailabilityDependencyProviderTest extends Unit
         $this->touchFacadeMock = $this->getMockBuilder(TouchFacadeInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->storeFacadeMock = $this->getMockBuilder(StoreFacadeInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
      * @return void
      */
-    public function testProvideBusinessLayerDependencies()
+    public function testProvideBusinessLayerDependencies(): void
     {
         $this->containerMock->expects($this->atLeastOnce())
             ->method('getLocator')
             ->willReturn($this->locatorMock);
 
         $this->locatorMock->expects($this->atLeastOnce())
-            ->method('oms')
-            ->willReturn($this->omsMock);
+            ->method('__call')
+            ->withConsecutive(['oms'], ['stock'], ['touch'], ['product'], ['store'])
+            ->willReturn($this->bundleProxyMock);
 
-        $this->locatorMock->expects($this->atLeastOnce())
-            ->method('touch')
-            ->willReturn($this->touchMock);
-
-        $this->locatorMock->expects($this->atLeastOnce())
-            ->method('product')
-            ->willReturn($this->productMock);
-
-        $this->locatorMock->expects($this->atLeastOnce())
-            ->method('stock')
-            ->willReturn($this->stockMock);
-
-        $this->omsMock->expects($this->atLeastOnce())
-            ->method('facade')
-            ->willReturn($this->omsFacadeMock);
-
-        $this->productMock->expects($this->atLeastOnce())
-            ->method('facade')
-            ->willReturn($this->productFacadeMock);
-
-        $this->stockMock->expects($this->atLeastOnce())
-            ->method('facade')
-            ->willReturn($this->stockFacadeMock);
-
-        $this->touchMock->expects($this->atLeastOnce())
-            ->method('facade')
-            ->willReturn($this->touchFacadeMock);
+        $this->bundleProxyMock->expects($this->atLeastOnce())
+            ->method('__call')
+            ->with('facade')
+            ->willReturnOnConsecutiveCalls(
+                $this->omsFacadeMock,
+                $this->stockFacadeMock,
+                $this->touchFacadeMock,
+                $this->productFacadeMock,
+                $this->storeFacadeMock
+            );
 
         $this->availabilityDependencyProvider->provideBusinessLayerDependencies($this->containerMock);
 
-        $valueNames = $this->containerMock->keys();
-
-        $this->assertTrue(in_array(AvailabilityDependencyProvider::FACADE_OMS, $valueNames));
-        $this->assertTrue(in_array(AvailabilityDependencyProvider::FACADE_PRODUCT, $valueNames));
-        $this->assertTrue(in_array(AvailabilityDependencyProvider::FACADE_TOUCH, $valueNames));
-        $this->assertTrue(in_array(AvailabilityDependencyProvider::FACADE_STOCK, $valueNames));
-
         $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_OMS]);
-        $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_PRODUCT]);
-        $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_TOUCH]);
         $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_STOCK]);
+        $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_TOUCH]);
+        $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_PRODUCT]);
+        $this->assertNotNull($this->containerMock[AvailabilityDependencyProvider::FACADE_STORE]);
     }
 }

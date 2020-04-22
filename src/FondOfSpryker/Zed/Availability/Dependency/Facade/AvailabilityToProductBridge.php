@@ -2,6 +2,7 @@
 
 namespace FondOfSpryker\Zed\Availability\Dependency\Facade;
 
+use Generated\Shared\Transfer\ProductConcreteTransfer;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToProductBridge as BaseAvailabilityToProductBridge;
 
 class AvailabilityToProductBridge extends BaseAvailabilityToProductBridge implements AvailabilityToProductInterface
@@ -13,7 +14,7 @@ class AvailabilityToProductBridge extends BaseAvailabilityToProductBridge implem
      *
      * @return \Generated\Shared\Transfer\ProductConcreteTransfer
      */
-    public function getProductConcrete($concreteSku)
+    public function getProductConcrete($concreteSku): ProductConcreteTransfer
     {
         return $this->productFacade->getProductConcrete($concreteSku);
     }

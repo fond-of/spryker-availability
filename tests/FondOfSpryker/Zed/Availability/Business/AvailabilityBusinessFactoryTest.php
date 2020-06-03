@@ -7,11 +7,14 @@ use FondOfSpryker\Zed\Availability\AvailabilityConfig;
 use FondOfSpryker\Zed\Availability\AvailabilityDependencyProvider;
 use FondOfSpryker\Zed\Availability\Business\Model\AvailabilityHandler;
 use FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface;
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToOmsInterface;
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToEventFacadeInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToOmsFacadeInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockFacadeInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface;
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchFacadeInterface;
+use Spryker\Zed\Availability\Persistence\AvailabilityEntityManager;
 use Spryker\Zed\Availability\Persistence\AvailabilityQueryContainer;
+use Spryker\Zed\Availability\Persistence\AvailabilityRepository;
 use Spryker\Zed\Kernel\Container;
 
 class AvailabilityBusinessFactoryTest extends Unit
@@ -32,17 +35,17 @@ class AvailabilityBusinessFactoryTest extends Unit
     protected $productFacadeMock;
 
     /**
-     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToOmsInterface|\PHPUnit\Framework\MockObject\MockObject|null
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToOmsFacadeInterface|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $omsFacadeMock;
 
     /**
-     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface|\PHPUnit\Framework\MockObject\MockObject|null
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockFacadeInterface|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $stockFacadeMock;
 
     /**
-     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface|\PHPUnit\Framework\MockObject\MockObject|null
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchFacadeInterface|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $touchFacadeMock;
 
@@ -62,6 +65,21 @@ class AvailabilityBusinessFactoryTest extends Unit
     protected $availabilityBusinessFactory;
 
     /**
+     * @var \Spryker\Zed\Availability\Persistence\AvailabilityRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject|null
+     */
+    protected $repository;
+
+    /**
+     * @var \Spryker\Zed\Availability\Persistence\AvailabilityEntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject|null
+     */
+    protected $entityManager;
+
+    /**
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToEventFacadeInterface|\PHPUnit\Framework\MockObject\MockObject|null
+     */
+    protected $eventFacade;
+
+    /**
      * @return void
      */
     protected function _before(): void
@@ -78,15 +96,15 @@ class AvailabilityBusinessFactoryTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->omsFacadeMock = $this->getMockBuilder(AvailabilityToOmsInterface::class)
+        $this->omsFacadeMock = $this->getMockBuilder(AvailabilityToOmsFacadeInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->stockFacadeMock = $this->getMockBuilder(AvailabilityToStockInterface::class)
+        $this->stockFacadeMock = $this->getMockBuilder(AvailabilityToStockFacadeInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->touchFacadeMock = $this->getMockBuilder(AvailabilityToTouchInterface::class)
+        $this->touchFacadeMock = $this->getMockBuilder(AvailabilityToTouchFacadeInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -98,11 +116,25 @@ class AvailabilityBusinessFactoryTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->repository = $this->getMockBuilder(AvailabilityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->entityManager = $this->getMockBuilder(AvailabilityEntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->eventFacade = $this->getMockBuilder(AvailabilityToEventFacadeInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->availabilityBusinessFactory = new AvailabilityBusinessFactory();
 
         $this->availabilityBusinessFactory->setConfig($this->configMock);
         $this->availabilityBusinessFactory->setContainer($this->containerMock);
         $this->availabilityBusinessFactory->setQueryContainer($this->queryContainerMock);
+        $this->availabilityBusinessFactory->setRepository($this->repository);
+        $this->availabilityBusinessFactory->setEntityManager($this->entityManager);
     }
 
     /**
@@ -119,17 +151,17 @@ class AvailabilityBusinessFactoryTest extends Unit
             ->withConsecutive(
                 [AvailabilityDependencyProvider::FACADE_OMS],
                 [AvailabilityDependencyProvider::FACADE_STOCK],
-                [AvailabilityDependencyProvider::FACADE_STORE],
-                [AvailabilityDependencyProvider::FACADE_STOCK],
                 [AvailabilityDependencyProvider::FACADE_TOUCH],
+                [AvailabilityDependencyProvider::FACADE_STOCK],
+                [AvailabilityDependencyProvider::FACADE_EVENT],
                 [AvailabilityDependencyProvider::FACADE_PRODUCT],
                 [AvailabilityDependencyProvider::FACADE_STORE]
             )->willReturnOnConsecutiveCalls(
                 $this->omsFacadeMock,
                 $this->stockFacadeMock,
-                $this->storeFacadeMock,
-                $this->stockFacadeMock,
                 $this->touchFacadeMock,
+                $this->stockFacadeMock,
+                $this->eventFacade,
                 $this->productFacadeMock,
                 $this->storeFacadeMock
             );

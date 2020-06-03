@@ -6,11 +6,12 @@ use Codeception\Test\Unit;
 use FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface;
 use Generated\Shared\Transfer\ProductConcreteTransfer;
 use ReflectionClass;
-use Spryker\Zed\Availability\Business\Model\SellableInterface;
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface;
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface;
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface;
-use Spryker\Zed\Availability\Persistence\AvailabilityQueryContainerInterface;
+use Spryker\Zed\Availability\Business\Model\ProductAvailabilityCalculatorInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToEventFacadeInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockFacadeInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchFacadeInterface;
+use Spryker\Zed\Availability\Persistence\AvailabilityEntityManagerInterface;
+use Spryker\Zed\Availability\Persistence\AvailabilityRepository;
 
 class AvailabilityHandlerTest extends Unit
 {
@@ -20,24 +21,24 @@ class AvailabilityHandlerTest extends Unit
     protected $availabilityHandler;
 
     /**
-     * @var \Spryker\Zed\Availability\Business\Model\SellableInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Availability\Persistence\AvailabilityEntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $sellableMock;
+    protected $entityManagerMock;
 
     /**
-     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockFacadeInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $stockFacadeMock;
 
     /**
-     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchFacadeInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $touchFacadeMock;
 
     /**
-     * @var \Spryker\Zed\Availability\Persistence\AvailabilityQueryContainerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Availability\Persistence\AvailabilityRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $queryContainerMock;
+    protected $repositoryMock;
 
     /**
      * @var \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -45,9 +46,9 @@ class AvailabilityHandlerTest extends Unit
     protected $productFacadeMock;
 
     /**
-     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Availability\Business\Model\ProductAvailabilityCalculatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $storeFacadeMock;
+    protected $availabilityCalculatorMock;
 
     /**
      * @var \Generated\Shared\Transfer\StoreTransfer|\PHPUnit\Framework\MockObject\MockObject
@@ -58,6 +59,11 @@ class AvailabilityHandlerTest extends Unit
      * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $concreteProductTransferMock;
+
+    /**
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToEventFacadeInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $eventFacadeMock;
 
     /**
      * @var string
@@ -74,23 +80,27 @@ class AvailabilityHandlerTest extends Unit
      */
     protected function _before(): void
     {
+        $this->repositoryMock = $this->getMockBuilder(AvailabilityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->entityManagerMock = $this->getMockBuilder(AvailabilityEntityManagerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->availabilityCalculatorMock = $this->getMockBuilder(ProductAvailabilityCalculatorInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->concreteProductTransferMock = $this->getMockBuilder(ProductConcreteTransfer::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->sellableMock = $this->getMockBuilder(SellableInterface::class)
+        $this->stockFacadeMock = $this->getMockBuilder(AvailabilityToStockFacadeInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->stockFacadeMock = $this->getMockBuilder(AvailabilityToStockInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->touchFacadeMock = $this->getMockBuilder(AvailabilityToTouchInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->queryContainerMock = $this->getMockBuilder(AvailabilityQueryContainerInterface::class)
+        $this->touchFacadeMock = $this->getMockBuilder(AvailabilityToTouchFacadeInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -98,7 +108,7 @@ class AvailabilityHandlerTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storeFacadeMock = $this->getMockBuilder(AvailabilityToStoreFacadeInterface::class)
+        $this->eventFacadeMock = $this->getMockBuilder(AvailabilityToEventFacadeInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -107,12 +117,13 @@ class AvailabilityHandlerTest extends Unit
         $this->defaultMinimalQuantity = 10;
 
         $this->availabilityHandler = new AvailabilityHandler(
-            $this->sellableMock,
-            $this->stockFacadeMock,
+            $this->repositoryMock,
+            $this->entityManagerMock,
+            $this->availabilityCalculatorMock,
             $this->touchFacadeMock,
-            $this->queryContainerMock,
+            $this->stockFacadeMock,
+            $this->eventFacadeMock,
             $this->productFacadeMock,
-            $this->storeFacadeMock,
             $this->defaultMinimalQuantity
         );
     }

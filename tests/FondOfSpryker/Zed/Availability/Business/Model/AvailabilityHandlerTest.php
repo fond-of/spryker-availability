@@ -4,6 +4,7 @@ namespace FondOfSpryker\Zed\Availability\Business\Model;
 
 use Codeception\Test\Unit;
 use FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface;
+use Generated\Shared\Transfer\ProductConcreteTransfer;
 use ReflectionClass;
 use Spryker\Zed\Availability\Business\Model\SellableInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface;
@@ -59,25 +60,24 @@ class AvailabilityHandlerTest extends Unit
     protected $concreteProductTransferMock;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
+     * @var string
      */
-    protected $spyAvailabilityQueryMock;
+    protected $sku;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
+     * @var int
      */
-    protected $spyAvailabilityMock;
+    protected $defaultMinimalQuantity;
 
     /**
      * @return void
      */
-    protected function _before()
+    protected function _before(): void
     {
-        $this->concreteProductTransferMock = $this->getMockBuilder('\Generated\Shared\Transfer\ProductConcreteTransfer')
+        $this->concreteProductTransferMock = $this->getMockBuilder(ProductConcreteTransfer::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getUseConfigForMinimalQuantity', 'getMinimalQuantity'])
             ->getMock();
-        
+
         $this->sellableMock = $this->getMockBuilder(SellableInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -102,32 +102,9 @@ class AvailabilityHandlerTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storeTransferMock = $this->getMockBuilder('\Generated\Shared\Transfer\StoreTransfer')
-            ->disableOriginalConstructor()
-            ->setMethods(['getIdStore'])
-            ->getMock();
+        $this->sku = 'TST-123-456-789';
 
-        $this->storeTransferMock
-            ->method('getIdStore')
-            ->willReturn(1);
-
-        $this->storeFacadeMock
-            ->method('getCurrentStore')
-            ->willReturn($this->storeTransferMock);
-
-        $this->spyAvailabilityQueryMock = $this->getMockBuilder("\Orm\Zed\Availability\Persistence\Base\SpyAvailabilityQuery")
-            ->disableOriginalConstructor()
-            ->setMethods(['findOne', 'findOneOrCreate'])
-            ->getMock();
-
-        $this->spyAvailabilityMock = $this->getMockBuilder("\Orm\Zed\Availability\Persistence\SpyAvailability")
-            ->disableOriginalConstructor()
-            ->setMethods(['getQuantity', 'isNew', 'setQuantity', 'setIsNeverOutOfStock', 'isColumnModified', 'save', 'getFkAvailabilityAbstract', 'setFkStore'])
-            ->getMock();
-
-        $this->spyAvailabilityAbstractQueryMock = $this->getMockBuilder('\Orm\Zed\Availability\Persistence\SpyAvailabilityAbstractQuery')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->defaultMinimalQuantity = 10;
 
         $this->availabilityHandler = new AvailabilityHandler(
             $this->sellableMock,
@@ -136,22 +113,20 @@ class AvailabilityHandlerTest extends Unit
             $this->queryContainerMock,
             $this->productFacadeMock,
             $this->storeFacadeMock,
-            10
+            $this->defaultMinimalQuantity
         );
     }
 
     /**
      * @return void
      */
-    public function testSaveCurrentAvailabilityWithDefaultMinimalQuantity()
+    public function testPrepareQuantityForAvailability(): void
     {
-        $sku = 'TST-123-456-789';
-        $abstractId = 1;
-        $storeId = 1;
+        $quantity = 15;
 
         $this->productFacadeMock->expects($this->atLeastOnce())
             ->method('getProductConcrete')
-            ->with($sku)
+            ->with($this->sku)
             ->willReturn($this->concreteProductTransferMock);
 
         $this->concreteProductTransferMock->expects($this->atLeastOnce())
@@ -161,76 +136,30 @@ class AvailabilityHandlerTest extends Unit
         $this->concreteProductTransferMock->expects($this->never())
             ->method('getMinimalQuantity');
 
-        $this->queryContainerMock->expects($this->atLeastOnce())
-            ->method('queryAvailabilityBySkuAndIdStore')
-            ->with($sku, $storeId)
-            ->willReturn($this->spyAvailabilityQueryMock);
-
-        $this->spyAvailabilityQueryMock->expects($this->atLeastOnce())
-            ->method('findOneOrCreate')
-            ->willReturn($this->spyAvailabilityMock);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('getQuantity')
-            ->willReturn(3);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('isNew')
-            ->willReturn(false);
-
-        $this->stockFacadeMock->expects($this->atLeastOnce())
-            ->method('isNeverOutOfStockForStore')
-            ->with($sku, $this->storeTransferMock)
-            ->willReturn(false);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('isColumnModified')
-            ->willReturn(false);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('save');
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('getFkAvailabilityAbstract')
-            ->willReturn($abstractId);
-
-        $this->spyAvailabilityQueryMock->expects($this->atLeastOnce())
-            ->method('findOne')
-            ->willReturnOnConsecutiveCalls(
-                $this->spyAvailabilityMock,
-                $this->spyAvailabilityMock,
-                12
-            );
-
-        $this->queryContainerMock->expects($this->atLeastOnce())
-            ->method('queryAvailabilityAbstractByIdAvailabilityAbstract')
-            ->with($abstractId, $storeId)
-            ->willReturn($this->spyAvailabilityQueryMock);
-
-        $this->queryContainerMock->expects($this->atLeastOnce())
-            ->method('querySumQuantityOfAvailabilityAbstract')
-            ->with($abstractId, $storeId)
-            ->willReturn($this->spyAvailabilityQueryMock);
-
         $reflection = new ReflectionClass(get_class($this->availabilityHandler));
-        $method = $reflection->getMethod('saveAndTouchAvailability');
+
+        $method = $reflection->getMethod('prepareQuantityForAvailability');
         $method->setAccessible(true);
 
-        $method->invokeArgs($this->availabilityHandler, [$sku, 15, $this->storeTransferMock]);
+        $preparedQuantity = $method->invokeArgs($this->availabilityHandler, [
+            $this->sku,
+            $quantity,
+        ]);
+
+        $this->assertEquals($quantity - $this->defaultMinimalQuantity, $preparedQuantity);
     }
 
     /**
      * @return void
      */
-    public function testSaveCurrentAvailability()
+    public function testPrepareQuantityForAvailabilityWithCustomMinimalQuantity(): void
     {
-        $sku = 'TST-123-456-789';
-        $abstractId = 1;
-        $storeId = 1;
+        $quantity = 15;
+        $minimalQuantity = 11;
 
         $this->productFacadeMock->expects($this->atLeastOnce())
             ->method('getProductConcrete')
-            ->with($sku)
+            ->with($this->sku)
             ->willReturn($this->concreteProductTransferMock);
 
         $this->concreteProductTransferMock->expects($this->atLeastOnce())
@@ -239,143 +168,50 @@ class AvailabilityHandlerTest extends Unit
 
         $this->concreteProductTransferMock->expects($this->atLeastOnce())
             ->method('getMinimalQuantity')
-            ->willReturn(10);
-
-        $this->queryContainerMock->expects($this->atLeastOnce())
-            ->method('queryAvailabilityBySkuAndIdStore')
-            ->with($sku, $storeId)
-            ->willReturn($this->spyAvailabilityQueryMock);
-
-        $this->spyAvailabilityQueryMock->expects($this->atLeastOnce())
-            ->method('findOneOrCreate')
-            ->willReturn($this->spyAvailabilityMock);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('getQuantity')
-            ->willReturn(3);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('isNew')
-            ->willReturn(false);
-
-        $this->stockFacadeMock->expects($this->atLeastOnce())
-            ->method('isNeverOutOfStockForStore')
-            ->with($sku, $this->storeTransferMock)
-            ->willReturn(false);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('isColumnModified')
-            ->willReturn(false);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('save');
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('getFkAvailabilityAbstract')
-            ->willReturn($abstractId);
-
-        $this->spyAvailabilityQueryMock->expects($this->atLeastOnce())
-            ->method('findOne')
-            ->willReturnOnConsecutiveCalls(
-                $this->spyAvailabilityMock,
-                $this->spyAvailabilityMock,
-                12
-            );
-
-        $this->queryContainerMock->expects($this->atLeastOnce())
-            ->method('queryAvailabilityAbstractByIdAvailabilityAbstract')
-            ->with($abstractId, $storeId)
-            ->willReturn($this->spyAvailabilityQueryMock);
-
-        $this->queryContainerMock->expects($this->atLeastOnce())
-            ->method('querySumQuantityOfAvailabilityAbstract')
-            ->with($abstractId, $storeId)
-            ->willReturn($this->spyAvailabilityQueryMock);
+            ->willReturn($minimalQuantity);
 
         $reflection = new ReflectionClass(get_class($this->availabilityHandler));
-        $method = $reflection->getMethod('saveAndTouchAvailability');
+
+        $method = $reflection->getMethod('prepareQuantityForAvailability');
         $method->setAccessible(true);
 
-        $method->invokeArgs($this->availabilityHandler, [$sku, 15, $this->storeTransferMock]);
+        $preparedQuantity = $method->invokeArgs($this->availabilityHandler, [
+            $this->sku,
+            $quantity,
+        ]);
+
+        $this->assertEquals($quantity - $minimalQuantity, $preparedQuantity);
     }
 
     /**
      * @return void
      */
-    public function testSaveCurrentAvailabilityWithNewQuantityEqualsZero()
+    public function testPrepareQuantityForAvailabilityWithQuantityZero(): void
     {
-        $sku = 'TST-123-456-789';
-        $abstractId = 1;
-        $storeId = 1;
+        $quantity = 0;
 
         $this->productFacadeMock->expects($this->atLeastOnce())
             ->method('getProductConcrete')
-            ->with($sku)
+            ->with($this->sku)
             ->willReturn($this->concreteProductTransferMock);
 
         $this->concreteProductTransferMock->expects($this->atLeastOnce())
             ->method('getUseConfigForMinimalQuantity')
-            ->willReturn(false);
+            ->willReturn(true);
 
-        $this->concreteProductTransferMock->expects($this->atLeastOnce())
-            ->method('getMinimalQuantity')
-            ->willReturn(10);
-
-        $this->queryContainerMock->expects($this->atLeastOnce())
-            ->method('queryAvailabilityBySkuAndIdStore')
-            ->with($sku, $storeId)
-            ->willReturn($this->spyAvailabilityQueryMock);
-
-        $this->spyAvailabilityQueryMock->expects($this->atLeastOnce())
-            ->method('findOneOrCreate')
-            ->willReturn($this->spyAvailabilityMock);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('getQuantity')
-            ->willReturn(3);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('isNew')
-            ->willReturn(false);
-
-        $this->stockFacadeMock->expects($this->atLeastOnce())
-            ->method('isNeverOutOfStockForStore')
-            ->with($sku, $this->storeTransferMock)
-            ->willReturn(false);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('isColumnModified')
-            ->willReturn(false);
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('save');
-
-        $this->spyAvailabilityMock->expects($this->atLeastOnce())
-            ->method('getFkAvailabilityAbstract')
-            ->willReturn($abstractId, $storeId);
-
-        $this->spyAvailabilityQueryMock->expects($this->atLeastOnce())
-            ->method('findOne')
-            ->willReturnOnConsecutiveCalls(
-                $this->spyAvailabilityMock,
-                $this->spyAvailabilityMock,
-                12
-            );
-
-        $this->queryContainerMock->expects($this->atLeastOnce())
-            ->method('queryAvailabilityAbstractByIdAvailabilityAbstract')
-            ->with($abstractId, $storeId)
-            ->willReturn($this->spyAvailabilityQueryMock);
-
-        $this->queryContainerMock->expects($this->atLeastOnce())
-            ->method('querySumQuantityOfAvailabilityAbstract')
-            ->with($abstractId, $storeId)
-            ->willReturn($this->spyAvailabilityQueryMock);
+        $this->concreteProductTransferMock->expects($this->never())
+            ->method('getMinimalQuantity');
 
         $reflection = new ReflectionClass(get_class($this->availabilityHandler));
-        $method = $reflection->getMethod('saveAndTouchAvailability');
+
+        $method = $reflection->getMethod('prepareQuantityForAvailability');
         $method->setAccessible(true);
 
-        $method->invokeArgs($this->availabilityHandler, [$sku, 0, $this->storeTransferMock]);
+        $preparedQuantity = $method->invokeArgs($this->availabilityHandler, [
+            $this->sku,
+            $quantity,
+        ]);
+
+        $this->assertEquals(0, $preparedQuantity);
     }
 }

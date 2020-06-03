@@ -59,6 +59,16 @@ class AvailabilityHandler extends BaseAvailabilityHandler
 
     /**
      * @param string $sku
+     *
+     * @return void
+     */
+    public function updateAvailability($sku): void
+    {
+        $this->updateAvailabilityForStore($sku, $this->storeFacade->getCurrentStore());
+    }
+
+    /**
+     * @param string $sku
      * @param \Spryker\DecimalObject\Decimal $quantity
      * @param \Generated\Shared\Transfer\StoreTransfer $storeTransfer
      *
@@ -66,15 +76,27 @@ class AvailabilityHandler extends BaseAvailabilityHandler
      */
     public function saveAndTouchAvailability(string $sku, Decimal $quantity, StoreTransfer $storeTransfer): int
     {
+        $quantity = $this->prepareQuantityForAvailability($sku, $quantity->toInt());
+        return parent::saveAndTouchAvailability($sku, new Decimal($quantity), $storeTransfer);
+    }
+
+    /**
+     * @param string $sku
+     * @param int $quantity
+     *
+     * @return int
+     */
+    protected function prepareQuantityForAvailability(string $sku, int $quantity): int
+    {
         $minimalQuantity = $this->getMinimalQuantityForAvailability($sku);
 
-        $quantity = $quantity->toInt() - $minimalQuantity;
+        $quantity -= $minimalQuantity;
 
         if ($quantity < 0) {
             $quantity = 0;
         }
-        
-        return parent::saveAndTouchAvailability($sku, new Decimal($quantity), $storeTransfer);
+
+        return $quantity;
     }
 
     /**
@@ -82,7 +104,7 @@ class AvailabilityHandler extends BaseAvailabilityHandler
      *
      * @return int
      */
-    protected function getMinimalQuantityForAvailability($sku)
+    protected function getMinimalQuantityForAvailability(string $sku): int
     {
         $concreteProduct = $this->productFacade->getProductConcrete($sku);
 

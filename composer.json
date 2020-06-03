@@ -22,7 +22,8 @@
   ],
   "require": {
     "php": ">=7.2",
-    "spryker/availability": "^9.1.0"
+    "spryker/availability": "^9.1.0",
+    "spryker/oms": "^11.4.0"
   },
   "require-dev": {
     "spryker/code-sniffer": "^0.14.7",
@@ -43,8 +44,7 @@
   "autoload-dev": {
     "psr-4": {
       "FondOfSpryker\\": "tests/FondOfSpryker/",
-      "Orm\\": "tests/Orm/",
-      "Generated\\": "tests/Generated/"
+      "Generated\\": "src/Generated/"
     }
   }
 }

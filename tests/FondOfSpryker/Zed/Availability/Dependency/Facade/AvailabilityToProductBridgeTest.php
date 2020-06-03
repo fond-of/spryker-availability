@@ -3,6 +3,7 @@
 namespace FondOfSpryker\Zed\Availability\Dependency\Facade;
 
 use Codeception\Test\Unit;
+use Generated\Shared\Transfer\ProductConcreteTransfer;
 use Spryker\Zed\Product\Business\Exception\MissingProductException;
 use Spryker\Zed\Product\Business\ProductFacade;
 
@@ -16,7 +17,7 @@ class AvailabilityToProductBridgeTest extends Unit
     /**
      * @var \Generated\Shared\Transfer\ProductConcreteTransfer
      */
-    protected $productConcreteTransfer;
+    protected $productConcreteTransferMock;
 
     /**
      * @var \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface
@@ -30,12 +31,14 @@ class AvailabilityToProductBridgeTest extends Unit
      */
     protected function _before()
     {
-        $productConcreteTransfer = $this->getMockBuilder('\Generated\Shared\Transfer\ProductConcreteTransfer');
+        $productConcreteTransferMock = $this->productConcreteTransferMock = $this->getMockBuilder(ProductConcreteTransfer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->productFacadeMock = $this->make(ProductFacade::class, [
-            'getProductConcrete' => function ($concreteSku) {
-                if ($concreteSku == 'TST-123-456-789') {
-                    return $this->productConcreteTransfer;
+            'getProductConcrete' => static function ($concreteSku) use ($productConcreteTransferMock) {
+                if ($concreteSku === 'TST-123-456-789') {
+                    return $productConcreteTransferMock;
                 }
 
                 throw new MissingProductException(
@@ -53,13 +56,13 @@ class AvailabilityToProductBridgeTest extends Unit
     /**
      * @return void
      */
-    public function testGetProductConcrete()
+    public function testGetProductConcrete(): void
     {
         $concreteSku = 'TST-123-456-789';
 
         try {
-            $this->availabilityToProductBridge->getProductConcrete($concreteSku);
-            $this->assertTrue(true);
+            $productConcreteTransfer = $this->availabilityToProductBridge->getProductConcrete($concreteSku);
+            $this->assertEquals($this->productConcreteTransferMock, $productConcreteTransfer);
         } catch (MissingProductException $e) {
             $this->fail();
         }
@@ -68,7 +71,7 @@ class AvailabilityToProductBridgeTest extends Unit
     /**
      * @return void
      */
-    public function testGetProductConcreteWithInvalidConcreteSku()
+    public function testGetProductConcreteWithInvalidConcreteSku(): void
     {
         $concreteSku = 'TST-123-456-788';
 

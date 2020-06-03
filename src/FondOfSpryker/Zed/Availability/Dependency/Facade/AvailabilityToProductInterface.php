@@ -3,6 +3,7 @@
 namespace FondOfSpryker\Zed\Availability\Dependency\Facade;
 
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToProductFacadeInterface as SprykerAvailabilityToProductFacadeInterface;
+use Generated\Shared\Transfer\ProductConcreteTransfer;
 
 interface AvailabilityToProductInterface extends SprykerAvailabilityToProductFacadeInterface
 {
@@ -13,5 +14,5 @@ interface AvailabilityToProductInterface extends SprykerAvailabilityToProductFac
      *
      * @return \Generated\Shared\Transfer\ProductConcreteTransfer
      */
-    public function getProductConcrete($concreteSku);
+    public function getProductConcrete($concreteSku): ProductConcreteTransfer;
 }

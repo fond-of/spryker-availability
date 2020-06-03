@@ -3,10 +3,10 @@
 namespace FondOfSpryker\Zed\Availability;
 
 use FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductBridge;
-use Spryker\Zed\Availability\AvailabilityDependencyProvider as BaseAvailabilityDependencyProvider;
+use Spryker\Zed\Availability\AvailabilityDependencyProvider as SprykerAvailabilityDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 
-class AvailabilityDependencyProvider extends BaseAvailabilityDependencyProvider
+class AvailabilityDependencyProvider extends SprykerAvailabilityDependencyProvider
 {
     /**
      * @param \Spryker\Zed\Kernel\Container $container
@@ -17,7 +17,7 @@ class AvailabilityDependencyProvider extends BaseAvailabilityDependencyProvider
     {
         $container = parent::provideBusinessLayerDependencies($container);
 
-        $container[self::FACADE_PRODUCT] = function (Container $container) {
+        $container[static::FACADE_PRODUCT] = function (Container $container) {
             return new AvailabilityToProductBridge($container->getLocator()->product()->facade());
         };
 

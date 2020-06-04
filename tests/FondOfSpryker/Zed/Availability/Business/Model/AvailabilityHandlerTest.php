@@ -9,6 +9,7 @@ use ReflectionClass;
 use Spryker\Zed\Availability\Business\Model\ProductAvailabilityCalculatorInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToEventFacadeInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockFacadeInterface;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchFacadeInterface;
 use Spryker\Zed\Availability\Persistence\AvailabilityEntityManagerInterface;
 use Spryker\Zed\Availability\Persistence\AvailabilityRepository;
@@ -76,6 +77,11 @@ class AvailabilityHandlerTest extends Unit
     protected $defaultMinimalQuantity;
 
     /**
+     * @var \PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $storeFacadeMock;
+
+    /**
      * @return void
      */
     protected function _before(): void
@@ -112,6 +118,10 @@ class AvailabilityHandlerTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->storeFacadeMock = $this->getMockBuilder(AvailabilityToStoreFacadeInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->sku = 'TST-123-456-789';
 
         $this->defaultMinimalQuantity = 10;
@@ -124,7 +134,8 @@ class AvailabilityHandlerTest extends Unit
             $this->stockFacadeMock,
             $this->eventFacadeMock,
             $this->productFacadeMock,
-            $this->defaultMinimalQuantity
+            $this->defaultMinimalQuantity,
+            $this->storeFacadeMock
         );
     }
 

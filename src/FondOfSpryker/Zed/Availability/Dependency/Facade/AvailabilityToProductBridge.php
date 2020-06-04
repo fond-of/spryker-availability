@@ -2,8 +2,8 @@
 
 namespace FondOfSpryker\Zed\Availability\Dependency\Facade;
 
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToProductFacadeBridge as SprykerAvailabilityToProductFacadeBridge;
 use Generated\Shared\Transfer\ProductConcreteTransfer;
+use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToProductFacadeBridge as SprykerAvailabilityToProductFacadeBridge;
 
 class AvailabilityToProductBridge extends SprykerAvailabilityToProductFacadeBridge implements AvailabilityToProductInterface
 {

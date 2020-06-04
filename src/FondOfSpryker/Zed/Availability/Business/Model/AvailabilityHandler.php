@@ -5,20 +5,16 @@ namespace FondOfSpryker\Zed\Availability\Business\Model;
 use FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface;
 use Generated\Shared\Transfer\StoreTransfer;
 use Spryker\DecimalObject\Decimal;
-use Spryker\Zed\Availability\Business\Model\AvailabilityHandler as BaseAvailabilityHandler;
+use Spryker\Zed\Availability\Business\Model\AvailabilityHandler as SprykerAvailabilityHandler;
 use Spryker\Zed\Availability\Business\Model\ProductAvailabilityCalculatorInterface;
-use Spryker\Zed\Availability\Business\Model\SellableInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToEventFacadeInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockFacadeInterface;
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchFacadeInterface;
-use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchInterface;
 use Spryker\Zed\Availability\Persistence\AvailabilityEntityManagerInterface;
-use Spryker\Zed\Availability\Persistence\AvailabilityQueryContainerInterface;
 use Spryker\Zed\Availability\Persistence\AvailabilityRepositoryInterface;
 
-class AvailabilityHandler extends BaseAvailabilityHandler
+class AvailabilityHandler extends SprykerAvailabilityHandler
 {
     /**
      * @var \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface
@@ -31,15 +27,20 @@ class AvailabilityHandler extends BaseAvailabilityHandler
     protected $defaultMinimalQuantity;
 
     /**
-     * AvailabilityHandler constructor.
-     * @param  \Spryker\Zed\Availability\Persistence\AvailabilityRepositoryInterface  $availabilityRepository
-     * @param  \Spryker\Zed\Availability\Persistence\AvailabilityEntityManagerInterface  $availabilityEntityManager
-     * @param  \Spryker\Zed\Availability\Business\Model\ProductAvailabilityCalculatorInterface  $availabilityCalculator
-     * @param  \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchFacadeInterface  $touchFacade
-     * @param  \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockFacadeInterface  $stockFacade
-     * @param  \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToEventFacadeInterface  $eventFacade
-     * @param  \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface  $productFacade
-     * @param  int  $defaultMinimalQuantity
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface
+     */
+    private $storeFacade;
+
+    /**
+     * @param \Spryker\Zed\Availability\Persistence\AvailabilityRepositoryInterface $availabilityRepository
+     * @param \Spryker\Zed\Availability\Persistence\AvailabilityEntityManagerInterface $availabilityEntityManager
+     * @param \Spryker\Zed\Availability\Business\Model\ProductAvailabilityCalculatorInterface $availabilityCalculator
+     * @param \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToTouchFacadeInterface $touchFacade
+     * @param \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStockFacadeInterface $stockFacade
+     * @param \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToEventFacadeInterface $eventFacade
+     * @param \FondOfSpryker\Zed\Availability\Dependency\Facade\AvailabilityToProductInterface $productFacade
+     * @param int $defaultMinimalQuantity
+     * @param \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface $storeFacade
      */
     public function __construct(
         AvailabilityRepositoryInterface $availabilityRepository,
@@ -49,12 +50,14 @@ class AvailabilityHandler extends BaseAvailabilityHandler
         AvailabilityToStockFacadeInterface $stockFacade,
         AvailabilityToEventFacadeInterface $eventFacade,
         AvailabilityToProductInterface $productFacade,
-        int $defaultMinimalQuantity
+        int $defaultMinimalQuantity,
+        AvailabilityToStoreFacadeInterface $storeFacade
     ) {
         parent::__construct($availabilityRepository, $availabilityEntityManager, $availabilityCalculator, $touchFacade, $stockFacade, $eventFacade);
 
         $this->defaultMinimalQuantity = $defaultMinimalQuantity;
         $this->productFacade = $productFacade;
+        $this->storeFacade = $storeFacade;
     }
 
     /**
@@ -77,6 +80,7 @@ class AvailabilityHandler extends BaseAvailabilityHandler
     public function saveAndTouchAvailability(string $sku, Decimal $quantity, StoreTransfer $storeTransfer): int
     {
         $quantity = $this->prepareQuantityForAvailability($sku, $quantity->toInt());
+
         return parent::saveAndTouchAvailability($sku, new Decimal($quantity), $storeTransfer);
     }
 

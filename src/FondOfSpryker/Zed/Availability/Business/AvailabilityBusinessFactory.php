@@ -4,7 +4,7 @@ namespace FondOfSpryker\Zed\Availability\Business;
 
 use FondOfSpryker\Zed\Availability\AvailabilityDependencyProvider;
 use FondOfSpryker\Zed\Availability\Business\Model\AvailabilityHandler;
-use Spryker\Zed\Availability\Business\AvailabilityBusinessFactory as BaseAvailabilityBusinessFactory;
+use Spryker\Zed\Availability\Business\AvailabilityBusinessFactory as SprykerAvailabilityBusinessFactory;
 use Spryker\Zed\Availability\Business\Model\AvailabilityHandlerInterface;
 use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToProductFacadeInterface;
 
@@ -12,7 +12,7 @@ use Spryker\Zed\Availability\Dependency\Facade\AvailabilityToProductFacadeInterf
  * @method \FondOfSpryker\Zed\Availability\AvailabilityConfig getConfig()
  * @method \Spryker\Zed\Availability\Persistence\AvailabilityQueryContainerInterface getQueryContainer()
  */
-class AvailabilityBusinessFactory extends BaseAvailabilityBusinessFactory
+class AvailabilityBusinessFactory extends SprykerAvailabilityBusinessFactory
 {
     /**
      * @return \Spryker\Zed\Availability\Business\Model\AvailabilityHandlerInterface
@@ -27,7 +27,8 @@ class AvailabilityBusinessFactory extends BaseAvailabilityBusinessFactory
             $this->getStockFacade(),
             $this->getEventFacade(),
             $this->getProductFacade(),
-            $this->getConfig()->getDefaultMinimalQuantity()
+            $this->getConfig()->getDefaultMinimalQuantity(),
+            $this->getStoreFacade()
         );
     }
 

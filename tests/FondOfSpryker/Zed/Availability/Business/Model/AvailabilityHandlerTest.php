@@ -77,7 +77,7 @@ class AvailabilityHandlerTest extends Unit
     protected $defaultMinimalQuantity;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
+     * @var \Spryker\Zed\Availability\Dependency\Facade\AvailabilityToStoreFacadeInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $storeFacadeMock;
 
